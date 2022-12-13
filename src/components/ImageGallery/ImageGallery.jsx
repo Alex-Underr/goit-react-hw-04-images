@@ -47,7 +47,7 @@ export default class ImageGallery extends Component {
   render() {
     return (
       <>
-        <ul className={styles.allery}>
+        <ul className={styles.gallery}>
           {this.state.arrayData &&
             this.state.arrayData.map(e => (
               <ImageGalleryItem
