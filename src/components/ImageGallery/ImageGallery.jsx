@@ -11,6 +11,7 @@ export default class ImageGallery extends Component {
     error: null,
     loading: false,
     button: false,
+    totalHits: null,
   };
   componentDidUpdate(prevProps, prevState) {
     let fetchString = `https://pixabay.com/api/?q=${this.props.request}&page=${this.props.page}&key=31176122-470dd6c20579d2a67d5e2ecc1&image_type=photo&orientation=horizontal&per_page=12`;
@@ -22,21 +23,18 @@ export default class ImageGallery extends Component {
       this.setState({ loading: true });
       fetch(fetchString)
         .then(res => res.json())
-        .then(arrayData => this.setState({ arrayData }))
-        .then(img => {
-          if (img.hits.length <= 12) {
-            this.setState({ button: false });
-          } else {
-            this.setState({ button: true });
-          }
-          if (!img.hits.length) {
+        .then(data => {
+          if (!data.hits?.length) {
             alert('Cant find image');
           }
-          return this.setState(prevState => ({
-            arrayData: [...prevState.arrayData.hits, ...img.hits],
+          if (data.hits?.length) {
+            console.log(`We find ${data.totalHits} images!`);
+          }
+          this.setState(prevState => ({
+            arrayData: [...prevState.arrayData, ...data.hits],
+            totalHits: data.totalHits,
           }));
         })
-
         .catch(error => this.setState({ error }))
         .finally(() => this.setState({ loading: false }));
     }
@@ -49,9 +47,9 @@ export default class ImageGallery extends Component {
   render() {
     return (
       <>
-        <ul className={styles.gallery}>
-          {this.state.arrayData.hits &&
-            this.state.arrayData.hits.map(e => (
+        <ul className={styles.allery}>
+          {this.state.arrayData &&
+            this.state.arrayData.map(e => (
               <ImageGalleryItem
                 key={e.id}
                 onClick={this.showImg}
@@ -60,7 +58,7 @@ export default class ImageGallery extends Component {
               />
             ))}
         </ul>
-        {this.state.arrayData.hits?.length < this.state.arrayData.totalHits &&
+        {this.state.arrayData?.length < this.state.totalHits &&
           !this.state.loading && <Button onClick={this.props.loadMore} />}
         {this.state.loading && <Loader />}
       </>
