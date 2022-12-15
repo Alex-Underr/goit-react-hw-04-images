@@ -1,54 +1,59 @@
 import styles from './app.module.css';
-import { Component } from 'react';
 import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
 import Modal from './Modal/Modal';
+import { useState } from 'react';
 
-export class App extends Component {
-  state = {
-    modalShow: false,
-    request: '',
-    largeImageURL: null,
-    id: null,
-    page: 1,
-  };
+export function App() {
+  const [modalShow, setmodalShow] = useState(false);
+  const [request, setRequest] = useState('');
+  const [largeImageURL, setLargeImageURL] = useState(null);
+  const [id, setId] = useState(null);
+  const [page, setPage] = useState(1);
 
-  toggleModal = (largeImageURL, id) => {
-    this.setState({ largeImageURL: largeImageURL, id: id });
-    this.setState(({ modalShow }) => ({
-      modalShow: !modalShow,
-    }));
+  const toggleModal = (largeImageURL, id) => {
+    setLargeImageURL(largeImageURL);
+    setId({ id });
+    setmodalShow(modalShow => !modalShow);
   };
-  searchBarSubmit = query => {
-    if (query !== this.state.request) {
-      this.setState({ request: query, page: 1 });
+  const searchBarSubmit = query => {
+    if (query !== request) {
+      setRequest(query);
+      setPage(1);
     }
   };
-  loadMore = () => {
-    this.setState(prevState => ({ page: prevState.page + 1 }));
+  const loadMore = () => {
+    setPage(page + 1);
+
+    // switch (page) {
+    //   case 'page':
+    //     setPage(page + 1);
+    //     console.log(loadMore());
+    //     break;
+
+    //   default:
+    //     break;
+    // }
   };
-  render() {
-    const { modalShow } = this.state;
-    return (
-      <div className={styles.app}>
-        <Searchbar onSubmit={this.searchBarSubmit} />
-        {modalShow && (
-          <Modal
-            onClose={this.toggleModal}
-            modalShow={this.modalShow}
-            id={this.state.id}
-            largeImageURL={this.state.largeImageURL}
-          >
-            <img src={this.state.largeImageURL} alt={this.state.id} />
-          </Modal>
-        )}
-        <ImageGallery
-          request={this.state.request}
-          onClick={this.toggleModal}
-          loadMore={this.loadMore}
-          page={this.state.page}
-        />
-      </div>
-    );
-  }
+  return (
+    <div className={styles.app}>
+      <Searchbar onSubmit={searchBarSubmit} />
+      {modalShow && (
+        <Modal
+          onClose={toggleModal}
+          modalShow={modalShow}
+          id={id}
+          largeImageURL={largeImageURL}
+        >
+          <img src={largeImageURL} alt={id} />
+        </Modal>
+      )}
+      <ImageGallery
+        request={request}
+        onClick={toggleModal}
+        loadMore={loadMore}
+        page={page}
+      />
+    </div>
+  );
 }
