@@ -4,18 +4,22 @@ import Button from '../Button/Button';
 import Loader from '../Loader/Loader';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
-export default function ImageGallery({ request, page, onClick, loadMore }) {
-  // const [imageData, setImageData] = useState(null);
-  const [arrayData, setArrayData] = useState([]);
-  const [error, setError] = useState(null);
+export default function ImageGallery({
+  request,
+  page,
+  onClick,
+  loadMore,
+  setArrayData,
+  arrayData,
+}) {
+  const [, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  // const [button, setButton] = useState(false);
   const [totalHits, setTotalHits] = useState(null);
 
   useEffect(() => {
-    // let fetchString = `https://pixabay.com/api/?q=${request}&page=${page}&key=31176122-470dd6c20579d2a67d5e2ecc1&image_type=photo&orientation=horizontal&per_page=12`;
+    let fetchString = `https://pixabay.com/api/?q=${request}&page=${page}&key=31176122-470dd6c20579d2a67d5e2ecc1&image_type=photo&orientation=horizontal&per_page=12`;
 
-    if (!request || !page) {
+    if (request) {
       setLoading(true);
       fetch(fetchString)
         .then(res => res.json())
@@ -26,14 +30,13 @@ export default function ImageGallery({ request, page, onClick, loadMore }) {
           if (data.hits?.length) {
             console.log(`We find ${data.totalHits} images!`);
           }
-          setArrayData([...arrayData, ...data.hits]);
+          setArrayData(prev => [...prev, ...data.hits]);
           setTotalHits(data.totalHits);
         })
         .catch(error => setError(error))
         .finally(() => setLoading(false));
     }
-    // return res.ok ? await res.json() : Promise.reject(new Error ('Not found'));
-  }, [request, page, arrayData]);
+  }, [request, page, setArrayData]);
 
   const showImg = (largeImageURL, id) => {
     onClick(largeImageURL, id);
@@ -42,15 +45,16 @@ export default function ImageGallery({ request, page, onClick, loadMore }) {
   return (
     <>
       <ul className={styles.gallery}>
-        {arrayData &&
-          arrayData.map(e => (
-            <ImageGalleryItem
-              key={e.id}
-              onClick={showImg}
-              largeImageURL={e.largeImageURL}
-              webformatURL={e.webformatURL}
-            />
-          ))}
+        {arrayData.length
+          ? arrayData.map(e => (
+              <ImageGalleryItem
+                key={e.id}
+                onClick={showImg}
+                largeImageURL={e.largeImageURL}
+                webformatURL={e.webformatURL}
+              />
+            ))
+          : null}
       </ul>
       {arrayData?.length < totalHits && !loading && (
         <Button onClick={loadMore} />

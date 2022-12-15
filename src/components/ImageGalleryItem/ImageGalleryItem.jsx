@@ -1,12 +1,12 @@
 import styles from './imageGalleryItem.module.css';
 import PropTypes from 'prop-types';
 
-export default function ImageGalleryItem(
+export default function ImageGalleryItem({
   onClick,
   largeImageURL,
   id,
-  webformatURL
-) {
+  webformatURL,
+}) {
   const showImg = () => {
     onClick(largeImageURL, id);
   };

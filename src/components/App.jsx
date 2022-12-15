@@ -10,7 +10,7 @@ export function App() {
   const [largeImageURL, setLargeImageURL] = useState(null);
   const [id, setId] = useState(null);
   const [page, setPage] = useState(1);
-
+  const [arrayData, setArrayData] = useState([]);
   const toggleModal = (largeImageURL, id) => {
     setLargeImageURL(largeImageURL);
     setId({ id });
@@ -20,20 +20,11 @@ export function App() {
     if (query !== request) {
       setRequest(query);
       setPage(1);
+      setArrayData([]);
     }
   };
   const loadMore = () => {
-    setPage(page + 1);
-
-    // switch (page) {
-    //   case 'page':
-    //     setPage(page + 1);
-    //     console.log(loadMore());
-    //     break;
-
-    //   default:
-    //     break;
-    // }
+    setPage(page => page + 1);
   };
   return (
     <div className={styles.app}>
@@ -53,6 +44,8 @@ export function App() {
         onClick={toggleModal}
         loadMore={loadMore}
         page={page}
+        arrayData={arrayData}
+        setArrayData={setArrayData}
       />
     </div>
   );

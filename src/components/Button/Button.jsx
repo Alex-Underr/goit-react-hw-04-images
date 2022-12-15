@@ -1,7 +1,7 @@
 import styles from './button.module.css';
 import PropTypes from 'prop-types';
 
-export default function Button(onClick) {
+export default function Button({ onClick }) {
   const handleClick = () => {
     onClick();
   };
